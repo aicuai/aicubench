@@ -21,6 +21,7 @@ def ensure_build_tools():
             sys.exit(1)
 
 COMFY_DIR = os.environ.get("COMFY_DIR", "./ComfyUI")
+COMFY_PORT = int(os.environ.get("COMFY_PORT", "8188"))
 BASEMODELS_TXT_URL = "https://raw.githubusercontent.com/aicuai/Book-SD-MasterGuide/main/basemodels.txt"
 
 # Check for --nodelete option
@@ -57,7 +58,7 @@ def test_comfyui_start():
     for _ in range(20):
         try:
             import requests
-            r = requests.get("http://127.0.0.1:8181")
+            r = requests.get(f"http://127.0.0.1:{COMFY_PORT}")
             if r.status_code == 200:
                 proc.terminate()
                 print("✅ ComfyUI test startup succeeded.")
@@ -117,7 +118,7 @@ def start_comfyui():
         print(f"❌ Error: main.py not found in {COMFY_DIR}")
         sys.exit(1)
     return subprocess.Popen(
-        ["python", "main.py", "--listen", "127.0.0.1", "--port", "8181"],
+        ["python", "main.py", "--listen", "127.0.0.1", "--port", str(COMFY_PORT)],
         cwd=COMFY_DIR,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -130,7 +131,7 @@ def measure_startup_time():
     for _ in range(20):
         try:
             import requests
-            r = requests.get("http://127.0.0.1:8181")
+            r = requests.get(f"http://127.0.0.1:{COMFY_PORT}")
             if r.status_code == 200:
                 break
         except Exception:
@@ -169,7 +170,7 @@ def trigger_inference():
     }
 
     try:
-        r = requests.post("http://127.0.0.1:8181/prompt", json=payload)
+        r = requests.post(f"http://127.0.0.1:{COMFY_PORT}/prompt", json=payload)
         print(f"✅ Inference triggered, status code: {r.status_code}")
         print(r.text)
     except Exception as e:
