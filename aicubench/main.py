@@ -8,8 +8,13 @@ import atexit
 COMFY_DIR = os.environ.get("COMFY_DIR", "./ComfyUI")
 BASEMODELS_TXT_URL = "https://raw.githubusercontent.com/aicuai/Book-SD-MasterGuide/main/basemodels.txt"
 
+# Check for --nodelete option
+NO_DELETE = "--nodelete" in sys.argv
 
 def clean():
+    if NO_DELETE:
+        print("⚠️ Skipping cleanup due to --nodelete option.")
+        return
     print("🧹 Cleaning up...")
     try:
         subprocess.run(["bash", "scripts/clean.sh"], check=True)
@@ -30,6 +35,24 @@ def clone_comfyui():
             sys.exit(1)
     else:
         print("✅ ComfyUI already exists.")
+
+def test_comfyui_start():
+    print("⚡ Testing initial ComfyUI startup before downloading models...")
+    proc = start_comfyui()
+    for _ in range(20):
+        try:
+            import requests
+            r = requests.get("http://127.0.0.1:8181")
+            if r.status_code == 200:
+                proc.terminate()
+                print("✅ ComfyUI test startup succeeded.")
+                return
+        except Exception:
+            time.sleep(0.5)
+    print("❌ ComfyUI test startup failed.")
+    proc.terminate()
+    clean()
+    sys.exit(1)
 
 def download_recommended_models():
     print("⬇️ Downloading recommended models...")
@@ -61,6 +84,14 @@ def download_recommended_models():
         print(f"❌ Failed to download models: {e}")
         sys.exit(1)
 
+def install_comfy_requirements():
+    print("📦 Installing ComfyUI requirements...")
+    req_file = os.path.join(COMFY_DIR, "requirements.txt")
+    if os.path.isfile(req_file):
+        subprocess.run(["pip", "install", "-r", req_file], check=True)
+    else:
+        print(f"⚠️ requirements.txt not found in {COMFY_DIR}")
+
 def start_comfyui():
     print("🚀 Launching ComfyUI headless server...")
     main_py_path = os.path.join(COMFY_DIR, "main.py")
@@ -78,7 +109,6 @@ def measure_startup_time():
     print("⏱ Measuring initial ComfyUI startup time...")
     start = time.time()
     process = start_comfyui()
-    # Wait for server to be up, try for up to 10 seconds (20 * 0.5s)
     for _ in range(20):
         try:
             import requests
@@ -130,6 +160,9 @@ def trigger_inference():
 def main():
     print("🚀 Starting AICU benchmark workflow...")
     clone_comfyui()
+    clone_comfyui()
+    install_comfy_requirements()
+    test_comfyui_start()
     download_recommended_models()
     process = measure_startup_time()
     print("🧠 Placeholder: Load checkpoints into memory...")
@@ -144,3 +177,6 @@ def main():
             process.wait(timeout=5)
         except subprocess.TimeoutExpired:
             process.kill()
+
+if __name__ == "__main__":
+    main()
