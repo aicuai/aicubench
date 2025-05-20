@@ -169,6 +169,8 @@ def main():
     process = measure_startup_time()
     print("🧠 Placeholder: Load checkpoints into memory...")
     print("🧠 Launching benchmark script: generate_sd15.py...")
+
+
     try:
         subprocess.run(["python", "scripts/generate_sd15.py"], check=True)
     except subprocess.CalledProcessError as e:
@@ -180,6 +182,13 @@ def main():
             process.wait(timeout=5)
         except subprocess.TimeoutExpired:
             process.kill()
+    try:
+      import subprocess
+      print("📡 Submitting benchmark result to GAS...")
+      subprocess.run(["python", "scripts/submit_result.py"], check=True)
+    except Exception as e:
+      print(f"❌ Failed to run submit_result.py: {e}")
 
+    print("✅ AICU benchmark workflow completed.")
 if __name__ == "__main__":
     main()
