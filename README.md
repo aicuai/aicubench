@@ -1,10 +1,14 @@
+| [English](README.md) | [日本語](README.ja.md) |
+
 # 🧪 aicubench
 
-aicubench is an open, standard benchmark toolset for PAISC workloads (Image, Video, Audio, Speech-to-Text, LLM) across platforms (Mac/Windows/Linux) and models (Stable Diffusion, AnimateDiff, Style-Bert-VITS2, Whisper, etc.).
+aicubench is a benchmark tool for testing image generation environments such as ComfyUI.
 
-This repository allows reproducible benchmarking using real-world prompts and datasets from Hugging Face AICU/aicubench, with results exportable to HTML and JSON for public publishing.
+Currently, it supports generating images with SD1.5 and submitting benchmark logs anonymously to Google Spreadsheet.
 
 ## 🔧 Quick Start (macOS)
+
+**💡 All data is sent and collected anonymously.**
 
 ### 1. Clone the repository
 
@@ -33,6 +37,8 @@ To use `aicubench` later:
 source .venv/bin/activate
 ```
 
+--nodelete option can be used to retain downloaded models and outputs. Otherwise, only `Artifacts/` and logs are preserved after execution.
+
 
 Then you can run a basic test (ComfyUI must be running in background):
 
@@ -45,7 +51,7 @@ aicubench all --prompt "1girl" --it 10
 
 `aicubench` will automatically:
 - Clone ComfyUI into the `ComfyUI/` directory
-- Download recommended model checkpoints into `ComfyUI/models/checkpoints/`
+- Download recommended model checkpoints into `ComfyUI/models/checkpoints/`, such as `v1-5-pruned-emaonly-fp16.safetensors`
 - Launch ComfyUI in headless mode on port `8181`
 - Attempt inference via the ComfyUI API
 
@@ -73,7 +79,7 @@ bash scripts/clean.sh
 ```
 
 This will delete:
-- The `ComfyUI/` directory (including all models)
+- The `ComfyUI/` directory (including downloaded models, unless `--nodelete` is specified)
 - Any temporary files
 
 The next run of `aicubench` will automatically reinitialize everything.

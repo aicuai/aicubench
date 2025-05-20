@@ -1,4 +1,19 @@
+# AICU Bench 
+
+| [English](README.md) | [日本語](README.ja.md) |
+
+---
+# これは何？
+
+ComfyUIをはじめとする画像生成AIの環境を評価するためのデータを取得するベンチマークです。
+
+本ベンチマークツールは、SD1.5モデルによる画像生成、およびGoogle Spreadsheetへの匿名ログ送信を行います。
+
+**💡 データは匿名で送信・集計されます。**
+
 ## 🔧 クイックスタート (macOS)
+
+M4 Macで開発していますが、WindowsやLinuxでも動くように設計はしています。
 
 ### 1. リポジトリをクローン
 
@@ -50,9 +65,9 @@ aicubench all --prompt "1girl" --it 10
 ComfyUI/
 └── models/
     ├── checkpoints/
-    │   └── v1-5-pruned-emaonly.ckpt
+    │   └── v1-5-pruned-emaonly-fp16.safetensors
     ├── vae/
     └── ...
 ```
 
-※ `aicubench/models/` 以下にダウンロードされてしまう場合は、ComfyUI の `models/` フォルダに移動してください。
+--nodelete オプションをつけて起動すると、ダウンロードしたファイルを残します。デフォルトではArtifactsに生成物やログを残す以外、ComfyUIディレクトリ以下は全て削除します。

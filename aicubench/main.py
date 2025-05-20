@@ -6,6 +6,13 @@ import urllib.request
 import atexit
 import platform
 
+COMFY_DIR = os.environ.get("COMFY_DIR", "./ComfyUI")
+COMFY_PORT = int(os.environ.get("COMFY_PORT", "8188"))
+BASEMODELS_TXT_URL = "https://raw.githubusercontent.com/aicuai/Book-SD-MasterGuide/main/basemodels.txt"
+WORKFLOW_COUNT = int(os.environ.get("WORKFLOW_COUNT", 100))
+
+NO_DELETE = "--nodelete" in sys.argv
+
 def ensure_build_tools():
     system = platform.system()
     print(f"🖥 Detected platform: {system}")
@@ -32,13 +39,6 @@ def ensure_build_tools():
         print("⚠️ Windows detected. Please manually install CMake and ensure `sentencepiece` can compile.")
     else:
         print(f"⚠️ Unknown platform: {system}. Proceed with caution.")
-
-COMFY_DIR = os.environ.get("COMFY_DIR", "./ComfyUI")
-COMFY_PORT = int(os.environ.get("COMFY_PORT", "8188"))
-BASEMODELS_TXT_URL = "https://raw.githubusercontent.com/aicuai/Book-SD-MasterGuide/main/basemodels.txt"
-
-# Check for --nodelete option
-NO_DELETE = "--nodelete" in sys.argv
 
 def clean():
     if NO_DELETE:
@@ -157,7 +157,6 @@ def measure_startup_time():
     print(f"🚀 ComfyUI started in {elapsed:.2f} seconds")
     return process
 
-
 def main():
     ensure_build_tools()
     print("🚀 Starting AICU benchmark workflow...")
@@ -168,27 +167,28 @@ def main():
     download_recommended_models()
     process = measure_startup_time()
     print("🧠 Placeholder: Load checkpoints into memory...")
-    print("🧠 Launching benchmark script: generate_sd15.py...")
 
-
-    try:
-        subprocess.run(["python", "scripts/generate_sd15.py"], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Benchmark subprocess failed: {e}")
-    finally:
-        print("🛑 Shutting down ComfyUI...")
-        process.terminate()
+    for i in range(WORKFLOW_COUNT):
+        json_name = f"sd15-{i:02d}.json"
+        print(f"🧠 Launching benchmark script for {json_name}...")
         try:
-            process.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            process.kill()
+            subprocess.run(["python", "scripts/generate_sd15.py", "--json", f"workflows/{json_name}"], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Benchmark subprocess failed: {e}")
+        try:
+            print("📡 Submitting benchmark result to GAS...")
+            subprocess.run(["python", "scripts/submit_result.py"], check=True)
+        except Exception as e:
+            print(f"❌ Failed to run submit_result.py: {e}")
+
+    print("🛑 Shutting down ComfyUI...")
+    process.terminate()
     try:
-      import subprocess
-      print("📡 Submitting benchmark result to GAS...")
-      subprocess.run(["python", "scripts/submit_result.py"], check=True)
-    except Exception as e:
-      print(f"❌ Failed to run submit_result.py: {e}")
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
 
     print("✅ AICU benchmark workflow completed.")
+
 if __name__ == "__main__":
     main()
