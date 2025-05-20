@@ -33,6 +33,8 @@ def download_recommended_models():
                         url = parts[parts.index("-c") + 1]
                         dest_dir = parts[parts.index("-P") + 1]
                         filename = os.path.basename(url)
+                        if "models" in dest_dir and not dest_dir.startswith(COMFY_DIR):
+                            dest_dir = os.path.join(COMFY_DIR, dest_dir)
                         os.makedirs(dest_dir, exist_ok=True)
                         dest_path = os.path.join(dest_dir, filename)
                         try:

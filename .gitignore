@@ -178,5 +178,18 @@ cython_debug/
 .DS_Store
 # Build artifacts
 *.whl
-# Ignore local ComfyUI clone
-ComfyUI/
+# Ignore generated/model files in ComfyUI but not the repo itself
+ComfyUI/output/
+ComfyUI/temp/
+ComfyUI/log/
+ComfyUI/.cache/
+ComfyUI/.venv/
+ComfyUI/*.ckpt
+ComfyUI/*.safetensors
+ComfyUI/models/checkpoints/
+ComfyUI/models/vae/
+ComfyUI/models/embeddings/
+ComfyUI/models/clip/
+ComfyUI/models/diffusion_models/
+ComfyUI/models/loras/
+ComfyUI/*
