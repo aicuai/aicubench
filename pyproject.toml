@@ -1,0 +1,24 @@
+[project]
+name = "aicubench"
+version = "0.1.0"
+description = "A benchmark tool for generative AI systems (ComfyUI, Whisper, SDXL, etc.)"
+authors = [
+    { name="AICU Inc.", email="support@aicu.ai" }
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+dependencies = [
+    "torch",
+    "transformers",
+    "psutil",
+    "requests",
+    "rich",
+]
+
+[project.scripts]
+aicubench = "aicubench.main:main"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

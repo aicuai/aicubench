@@ -130,6 +130,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+*.egg-info/
 env/
 venv/
 ENV/
@@ -172,3 +173,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+# Build artifacts
+*.whl
