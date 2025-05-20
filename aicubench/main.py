@@ -157,37 +157,6 @@ def measure_startup_time():
     print(f"🚀 ComfyUI started in {elapsed:.2f} seconds")
     return process
 
-def trigger_inference():
-    import requests
-    import json
-
-    print("🖼️ Triggering inference via ComfyUI API...")
-    payload = {
-        "prompt": {
-            "1": {
-                "inputs": {
-                    "seed": 42,
-                    "steps": 20,
-                    "cfg": 7.0,
-                    "sampler_name": "euler",
-                    "scheduler": "normal",
-                    "denoise": 1.0,
-                    "width": 512,
-                    "height": 512,
-                    "positive": "1girl",
-                    "negative": "",
-                },
-                "class_type": "KSampler"
-            }
-        }
-    }
-
-    try:
-        r = requests.post(f"http://127.0.0.1:{COMFY_PORT}/prompt", json=payload)
-        print(f"✅ Inference triggered, status code: {r.status_code}")
-        print(r.text)
-    except Exception as e:
-        print(f"❌ Failed to trigger inference: {e}")
 
 def main():
     ensure_build_tools()
@@ -199,10 +168,11 @@ def main():
     download_recommended_models()
     process = measure_startup_time()
     print("🧠 Placeholder: Load checkpoints into memory...")
+    print("🧠 Launching benchmark script: generate_sd15.py...")
     try:
-        trigger_inference()
-    except Exception as e:
-        print(f"❌ Benchmark failed: {e}")
+        subprocess.run(["python", "scripts/generate_sd15.py"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Benchmark subprocess failed: {e}")
     finally:
         print("🛑 Shutting down ComfyUI...")
         process.terminate()
