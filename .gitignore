@@ -179,6 +179,7 @@ cython_debug/
 # Build artifacts
 *.whl
 # Ignore generated/model files in ComfyUI but not the repo itself
+ComfyUI/
 ComfyUI/output/
 ComfyUI/temp/
 ComfyUI/log/
