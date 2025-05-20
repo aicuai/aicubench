@@ -103,6 +103,9 @@ def install_comfy_requirements():
     print("📦 Installing ComfyUI requirements...")
     req_file = os.path.join(COMFY_DIR, "requirements.txt")
     if os.path.isfile(req_file):
+        if sys.version_info >= (3, 12):
+            print("❌ Python 3.13+ is not supported for sentencepiece. Please use Python 3.11.")
+            sys.exit(1)
         subprocess.run(["pip", "install", "-r", req_file], check=True)
     else:
         print(f"⚠️ requirements.txt not found in {COMFY_DIR}")
