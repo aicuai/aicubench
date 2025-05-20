@@ -3,9 +3,20 @@ import os
 import sys
 import time
 import urllib.request
+import atexit
 
 COMFY_DIR = os.environ.get("COMFY_DIR", "./ComfyUI")
 BASEMODELS_TXT_URL = "https://raw.githubusercontent.com/aicuai/Book-SD-MasterGuide/main/basemodels.txt"
+
+
+def clean():
+    print("🧹 Cleaning up...")
+    try:
+        subprocess.run(["bash", "scripts/clean.sh"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️ Cleanup failed: {e}")
+
+atexit.register(clean)
 
 def clone_comfyui():
     if not os.path.isdir(COMFY_DIR):
@@ -67,7 +78,19 @@ def measure_startup_time():
     print("⏱ Measuring initial ComfyUI startup time...")
     start = time.time()
     process = start_comfyui()
-    time.sleep(10)  # simplistic wait for demo purposes
+    # Wait for server to be up, try for up to 10 seconds (20 * 0.5s)
+    for _ in range(20):
+        try:
+            import requests
+            r = requests.get("http://127.0.0.1:8181")
+            if r.status_code == 200:
+                break
+        except Exception:
+            time.sleep(0.5)
+    else:
+        print("❌ ComfyUI failed to start.")
+        clean()
+        sys.exit(1)
     elapsed = time.time() - start
     print(f"🚀 ComfyUI started in {elapsed:.2f} seconds")
     return process
@@ -110,5 +133,14 @@ def main():
     download_recommended_models()
     process = measure_startup_time()
     print("🧠 Placeholder: Load checkpoints into memory...")
-    trigger_inference()
-    process.wait()
+    try:
+        trigger_inference()
+    except Exception as e:
+        print(f"❌ Benchmark failed: {e}")
+    finally:
+        print("🛑 Shutting down ComfyUI...")
+        process.terminate()
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            process.kill()
