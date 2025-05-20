@@ -5,20 +5,33 @@ import time
 import urllib.request
 import atexit
 import platform
+
 def ensure_build_tools():
-    if platform.system() == "Darwin":
+    system = platform.system()
+    print(f"🖥 Detected platform: {system}")
+    if system == "Darwin":
         print("🔧 Checking macOS build tools for sentencepiece...")
         try:
             subprocess.run(["brew", "--version"], check=True, stdout=subprocess.DEVNULL)
-        except subprocess.CalledProcessError:
-            print("❌ Homebrew is not installed. Please install it from https://brew.sh/")
-            sys.exit(1)
-
-        try:
             subprocess.run(["brew", "install", "cmake", "pkg-config", "coreutils"], check=True)
         except subprocess.CalledProcessError:
-            print("❌ Failed to install required build tools via Homebrew.")
+            print("❌ Failed to verify or install Homebrew tools.")
             sys.exit(1)
+    elif system == "Linux":
+        if "COLAB_GPU" in os.environ:
+            print("🔧 Installing Linux build tools for Google Colab...")
+            try:
+                subprocess.run(["apt-get", "update"], check=True)
+                subprocess.run(["apt-get", "install", "-y", "cmake", "pkg-config"], check=True)
+            except subprocess.CalledProcessError:
+                print("❌ Failed to install required build tools on Colab.")
+                sys.exit(1)
+        else:
+            print("ℹ️ Linux platform detected. Please ensure cmake and pkg-config are installed.")
+    elif system == "Windows":
+        print("⚠️ Windows detected. Please manually install CMake and ensure `sentencepiece` can compile.")
+    else:
+        print(f"⚠️ Unknown platform: {system}. Proceed with caution.")
 
 COMFY_DIR = os.environ.get("COMFY_DIR", "./ComfyUI")
 COMFY_PORT = int(os.environ.get("COMFY_PORT", "8188"))
