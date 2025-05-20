@@ -4,6 +4,21 @@ import sys
 import time
 import urllib.request
 import atexit
+import platform
+def ensure_build_tools():
+    if platform.system() == "Darwin":
+        print("🔧 Checking macOS build tools for sentencepiece...")
+        try:
+            subprocess.run(["brew", "--version"], check=True, stdout=subprocess.DEVNULL)
+        except subprocess.CalledProcessError:
+            print("❌ Homebrew is not installed. Please install it from https://brew.sh/")
+            sys.exit(1)
+
+        try:
+            subprocess.run(["brew", "install", "cmake", "pkg-config", "coreutils"], check=True)
+        except subprocess.CalledProcessError:
+            print("❌ Failed to install required build tools via Homebrew.")
+            sys.exit(1)
 
 COMFY_DIR = os.environ.get("COMFY_DIR", "./ComfyUI")
 BASEMODELS_TXT_URL = "https://raw.githubusercontent.com/aicuai/Book-SD-MasterGuide/main/basemodels.txt"
@@ -158,6 +173,7 @@ def trigger_inference():
         print(f"❌ Failed to trigger inference: {e}")
 
 def main():
+    ensure_build_tools()
     print("🚀 Starting AICU benchmark workflow...")
     clone_comfyui()
     clone_comfyui()
