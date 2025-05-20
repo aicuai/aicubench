@@ -174,7 +174,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-#aicubench
+#aicubench below
 .DS_Store
 # Build artifacts
 *.whl
@@ -194,3 +194,5 @@ ComfyUI/models/clip/
 ComfyUI/models/diffusion_models/
 ComfyUI/models/loras/
 ComfyUI/*
+# artifacts
+/Artifacts/
