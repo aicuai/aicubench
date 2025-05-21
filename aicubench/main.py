@@ -19,7 +19,6 @@ NO_DELETE = "--nodelete" in sys.argv
 GPU_INFO_PATH = Path("Artifacts/gpu_info.json")
 LAST_SUCCESS_PATH = Path("Artifacts/last_success.json")
 
-
 def ensure_build_tools():
     system = platform.system()
     print(f"🖥 Detected platform: {system}")
@@ -47,7 +46,6 @@ def ensure_build_tools():
     else:
         print(f"⚠️ Unknown platform: {system}. Proceed with caution.")
 
-
 def clean():
     if NO_DELETE:
         print("⚠️ Skipping cleanup due to --nodelete option.")
@@ -57,7 +55,6 @@ def clean():
         subprocess.run(["bash", "scripts/clean.sh"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"⚠️ Cleanup failed: {e}")
-
 
 def clone_comfyui():
     if not os.path.isdir(COMFY_DIR):
@@ -71,7 +68,6 @@ def clone_comfyui():
             sys.exit(1)
     else:
         print("✅ ComfyUI already exists.")
-
 
 def download_recommended_models():
     print("⬇️ Downloading recommended models...")
@@ -103,7 +99,6 @@ def download_recommended_models():
         print(f"❌ Failed to download models: {e}")
         sys.exit(1)
 
-
 def install_comfy_requirements():
     print("📦 Installing ComfyUI requirements...")
     req_file = os.path.join(COMFY_DIR, "requirements.txt")
@@ -114,7 +109,6 @@ def install_comfy_requirements():
         subprocess.run(["pip", "install", "-r", req_file], check=True)
     else:
         print(f"⚠️ requirements.txt not found in {COMFY_DIR}")
-
 
 def start_comfyui():
     print("🚀 Launching ComfyUI headless server...")
@@ -128,7 +122,6 @@ def start_comfyui():
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
-
 
 def measure_startup_time():
     print("⏱ Measuring initial ComfyUI startup time...")
@@ -149,7 +142,6 @@ def measure_startup_time():
     elapsed = time.time() - start
     print(f"🚀 ComfyUI started in {elapsed:.2f} seconds")
     return process
-
 
 def get_gpu_info():
     import platform
@@ -172,7 +164,6 @@ def get_gpu_info():
     GPU_INFO_PATH.write_text(json.dumps(result, indent=2))
     return result
 
-
 def main():
     ensure_build_tools()
     print("🚀 Starting AICU benchmark workflow...")
@@ -180,7 +171,6 @@ def main():
     clone_comfyui()
     install_comfy_requirements()
     download_recommended_models()
-
     get_gpu_info()
 
     process = measure_startup_time()
@@ -204,6 +194,7 @@ def main():
             subprocess.run(["python", "scripts/generate_sd15.py", "--json", str(json_file)], check=True)
             LAST_SUCCESS_PATH.write_text(json_file.name)
             last_success = str(json_file)
+            subprocess.run(["python", "scripts/submit_result.py"], check=True)
         except subprocess.CalledProcessError as e:
             print(f"❌ Benchmark subprocess failed: {e}")
 
