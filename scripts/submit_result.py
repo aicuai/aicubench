@@ -34,15 +34,25 @@ def submit_to_gas():
     submission_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"{os.uname().nodename}-{datetime.utcnow().isoformat()}"))
     data['uuid'] = submission_id
 
-    if GPU_INFO_FILE.exists():
-        with open(GPU_INFO_FILE, 'r', encoding='utf-8') as gf:
-            gpu_info = json.load(gf)
-            data['gpu_info'] = gpu_info
+    if GPU_INFO_FILE.exists() and GPU_INFO_FILE.stat().st_size > 0:
+        try:
+            with open(GPU_INFO_FILE, 'r', encoding='utf-8') as gf:
+                gpu_info = json.load(gf)
+                data['gpu_info'] = gpu_info
+        except json.JSONDecodeError as e:
+            print(f"⚠️ Failed to parse gpu_info.json: {e}")
+    else:
+        print("⚠️ GPU_INFO_FILE is missing or empty.")
 
-    if LAST_SUCCESS_FILE.exists():
-        with open(LAST_SUCCESS_FILE, 'r', encoding='utf-8') as lf:
-            last_prompt = json.load(lf)
-            data['last_prompt'] = last_prompt.get("workflow")
+    if LAST_SUCCESS_FILE.exists() and LAST_SUCCESS_FILE.stat().st_size > 0:
+        try:
+            with open(LAST_SUCCESS_FILE, 'r', encoding='utf-8') as lf:
+                last_prompt = json.load(lf)
+                data['last_prompt'] = last_prompt.get("workflow")
+        except json.JSONDecodeError as e:
+            print(f"⚠️ Failed to parse last_success.json: {e}")
+    else:
+        print("⚠️ LAST_SUCCESS_FILE is missing or empty.")
 
     data['timestamp'] = datetime.utcnow().isoformat()
     data['schema_version'] = "1.1"
