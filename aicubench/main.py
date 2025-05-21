@@ -168,7 +168,6 @@ def main():
     ensure_build_tools()
     print("🚀 Starting AICU benchmark workflow...")
     clone_comfyui()
-    clone_comfyui()
     install_comfy_requirements()
     download_recommended_models()
     get_gpu_info()
@@ -194,7 +193,6 @@ def main():
             subprocess.run(["python", "scripts/generate_sd15.py", "--json", str(json_file)], check=True)
             LAST_SUCCESS_PATH.write_text(json_file.name)
             last_success = str(json_file)
-            subprocess.run(["python", "scripts/submit_result.py"], check=True)
         except subprocess.CalledProcessError as e:
             print(f"❌ Benchmark subprocess failed: {e}")
 
@@ -204,6 +202,12 @@ def main():
         process.wait(timeout=5)
     except subprocess.TimeoutExpired:
         process.kill()
+
+    print("📤 Submitting benchmark results to GAS...")
+    try:
+        subprocess.run(["python", "scripts/submit_result.py"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed to submit results: {e}")
 
     print("✅ AICU benchmark workflow completed.")
 

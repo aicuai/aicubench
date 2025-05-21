@@ -9,6 +9,7 @@ ARTIFACTS_DIR = Path("Artifacts")
 BENCHMARK_LOG = ARTIFACTS_DIR / "benchmark_summary.json"
 GPU_INFO_FILE = ARTIFACTS_DIR / "gpu_info.json"
 LAST_SUCCESS_FILE = ARTIFACTS_DIR / "last_success.json"
+SUBMIT_MARKER = ARTIFACTS_DIR / ".submitted"
 GAS_ENDPOINT = os.environ.get("GAS_ENDPOINT", "https://script.google.com/macros/s/AKfycbzgjRG-ebQxZDF6sdJwCGGZj3JMYF8nqNYQ4dCvMHuxlm8AKxp1zI_-N2NSVMB4eoG9/exec")
 
 
@@ -26,6 +27,10 @@ def flatten_dict(d, parent_key='', sep='.'):
 def submit_to_gas():
     if not BENCHMARK_LOG.exists():
         print(f"❌ Benchmark result not found: {BENCHMARK_LOG}")
+        return
+
+    if SUBMIT_MARKER.exists():
+        print("ℹ️ Submission already completed. Skipping.")
         return
 
     with open(BENCHMARK_LOG, 'r', encoding='utf-8') as f:
@@ -63,6 +68,7 @@ def submit_to_gas():
         response = requests.post(GAS_ENDPOINT, json=flat)
         if response.status_code == 200:
             print("✅ Submission successful.")
+            SUBMIT_MARKER.touch()
         else:
             print(f"⚠️ Submission failed with status {response.status_code}: {response.text}")
     except Exception as e:
