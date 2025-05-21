@@ -195,4 +195,5 @@ ComfyUI/models/diffusion_models/
 ComfyUI/models/loras/
 ComfyUI/*
 # artifacts
-/Artifacts/
+/Artifacts/*
+/output_images/*

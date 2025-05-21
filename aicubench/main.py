@@ -5,13 +5,20 @@ import time
 import urllib.request
 import atexit
 import platform
+import json
+from pathlib import Path
 
 COMFY_DIR = os.environ.get("COMFY_DIR", "./ComfyUI")
 COMFY_PORT = int(os.environ.get("COMFY_PORT", "8188"))
 BASEMODELS_TXT_URL = "https://raw.githubusercontent.com/aicuai/Book-SD-MasterGuide/main/basemodels.txt"
-WORKFLOW_COUNT = int(os.environ.get("WORKFLOW_COUNT", 100))
+WORKFLOW_DIR = Path("workflows")
+WORKFLOW_TEMPLATE = "sd15-{i:02}.json"
 
 NO_DELETE = "--nodelete" in sys.argv
+
+GPU_INFO_PATH = Path("Artifacts/gpu_info.json")
+LAST_SUCCESS_PATH = Path("Artifacts/last_success.json")
+
 
 def ensure_build_tools():
     system = platform.system()
@@ -40,6 +47,7 @@ def ensure_build_tools():
     else:
         print(f"⚠️ Unknown platform: {system}. Proceed with caution.")
 
+
 def clean():
     if NO_DELETE:
         print("⚠️ Skipping cleanup due to --nodelete option.")
@@ -50,7 +58,6 @@ def clean():
     except subprocess.CalledProcessError as e:
         print(f"⚠️ Cleanup failed: {e}")
 
-atexit.register(clean)
 
 def clone_comfyui():
     if not os.path.isdir(COMFY_DIR):
@@ -65,23 +72,6 @@ def clone_comfyui():
     else:
         print("✅ ComfyUI already exists.")
 
-def test_comfyui_start():
-    print("⚡ Testing initial ComfyUI startup before downloading models...")
-    proc = start_comfyui()
-    for _ in range(20):
-        try:
-            import requests
-            r = requests.get(f"http://127.0.0.1:{COMFY_PORT}")
-            if r.status_code == 200:
-                proc.terminate()
-                print("✅ ComfyUI test startup succeeded.")
-                return
-        except Exception:
-            time.sleep(0.5)
-    print("❌ ComfyUI test startup failed.")
-    proc.terminate()
-    clean()
-    sys.exit(1)
 
 def download_recommended_models():
     print("⬇️ Downloading recommended models...")
@@ -113,6 +103,7 @@ def download_recommended_models():
         print(f"❌ Failed to download models: {e}")
         sys.exit(1)
 
+
 def install_comfy_requirements():
     print("📦 Installing ComfyUI requirements...")
     req_file = os.path.join(COMFY_DIR, "requirements.txt")
@@ -123,6 +114,7 @@ def install_comfy_requirements():
         subprocess.run(["pip", "install", "-r", req_file], check=True)
     else:
         print(f"⚠️ requirements.txt not found in {COMFY_DIR}")
+
 
 def start_comfyui():
     print("🚀 Launching ComfyUI headless server...")
@@ -136,6 +128,7 @@ def start_comfyui():
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
+
 
 def measure_startup_time():
     print("⏱ Measuring initial ComfyUI startup time...")
@@ -157,29 +150,62 @@ def measure_startup_time():
     print(f"🚀 ComfyUI started in {elapsed:.2f} seconds")
     return process
 
+
+def get_gpu_info():
+    import platform
+    import json
+    result = {"platform": platform.system()}
+    try:
+        if result["platform"] == "Linux":
+            info = subprocess.check_output(["nvidia-smi", "--query-gpu=name,memory.total", "--format=csv"], encoding="utf-8")
+            result["nvidia-smi"] = info.strip()
+        elif result["platform"] == "Darwin":
+            try:
+                import tensorflow as tf
+                gpus = tf.config.list_physical_devices("GPU")
+                result["tensorflow"] = [str(g) for g in gpus]
+            except Exception as e:
+                result["tensorflow"] = str(e)
+    except Exception as e:
+        result["error"] = str(e)
+    GPU_INFO_PATH.parent.mkdir(parents=True, exist_ok=True)
+    GPU_INFO_PATH.write_text(json.dumps(result, indent=2))
+    return result
+
+
 def main():
     ensure_build_tools()
     print("🚀 Starting AICU benchmark workflow...")
     clone_comfyui()
     clone_comfyui()
     install_comfy_requirements()
-    test_comfyui_start()
     download_recommended_models()
+
+    get_gpu_info()
+
     process = measure_startup_time()
     print("🧠 Placeholder: Load checkpoints into memory...")
 
-    for i in range(WORKFLOW_COUNT):
-        json_name = f"sd15-{i:02d}.json"
-        print(f"🧠 Launching benchmark script for {json_name}...")
+    import requests
+    last_success = ""
+
+    for i in range(100):
+        json_file = WORKFLOW_DIR / f"sd15-{i:02}.json"
+        if not json_file.exists():
+            if last_success:
+                json_file = Path(last_success)
+                print(f"⚠️ JSON file not found: using fallback {json_file.name}")
+            else:
+                print(f"❌ JSON file not found and no fallback available: {json_file.name}")
+                continue
+
+        print(f"🧠 Launching benchmark script for {json_file.name}...")
         try:
-            subprocess.run(["python", "scripts/generate_sd15.py", "--json", f"workflows/{json_name}"], check=True)
+            subprocess.run(["python", "scripts/generate_sd15.py", "--json", str(json_file)], check=True)
+            LAST_SUCCESS_PATH.write_text(json_file.name)
+            last_success = str(json_file)
         except subprocess.CalledProcessError as e:
             print(f"❌ Benchmark subprocess failed: {e}")
-        try:
-            print("📡 Submitting benchmark result to GAS...")
-            subprocess.run(["python", "scripts/submit_result.py"], check=True)
-        except Exception as e:
-            print(f"❌ Failed to run submit_result.py: {e}")
 
     print("🛑 Shutting down ComfyUI...")
     process.terminate()
@@ -189,6 +215,9 @@ def main():
         process.kill()
 
     print("✅ AICU benchmark workflow completed.")
+
+    if not NO_DELETE:
+        clean()
 
 if __name__ == "__main__":
     main()

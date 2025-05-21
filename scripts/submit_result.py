@@ -1,40 +1,63 @@
+import os
 import json
 import requests
 from pathlib import Path
+from datetime import datetime
+import uuid
 
-GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwJrEtqFu2cW-rFqBqXRIIEsuuajH-of5PUlYha97yOaRQ1681-T3xSfEHInlbW5dPT/exec"
-DEFAULT_RESULT_PATH = "Artifacts/benchmark_summary.json"
+ARTIFACTS_DIR = Path("Artifacts")
+BENCHMARK_LOG = ARTIFACTS_DIR / "benchmark_summary.json"
+GPU_INFO_FILE = ARTIFACTS_DIR / "gpu_info.json"
+LAST_SUCCESS_FILE = ARTIFACTS_DIR / "last_success.json"
+GAS_ENDPOINT = os.environ.get("GAS_ENDPOINT", "https://script.google.com/macros/s/AKfycbzgjRG-ebQxZDF6sdJwCGGZj3JMYF8nqNYQ4dCvMHuxlm8AKxp1zI_-N2NSVMB4eoG9/exec")
 
-def flatten_json(y, prefix=''):
-    """Flatten nested JSON for spreadsheet use."""
-    out = {}
-    def flatten(x, name=''):
-        if isinstance(x, dict):
-            for a in x:
-                flatten(x[a], f'{name}{a}_')
-        elif isinstance(x, list):
-            for i, a in enumerate(x):
-                flatten(a, f'{name}{i}_')
+
+def flatten_dict(d, parent_key='', sep='.'):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
         else:
-            out[name[:-1]] = x
-    flatten(y, prefix)
-    return out
+            items.append((new_key, v))
+    return dict(items)
 
-def submit_benchmark_result(path=DEFAULT_RESULT_PATH):
-    result_path = Path(path)
-    if not result_path.exists():
-        print(f"❌ Benchmark result not found: {result_path}")
+
+def submit_to_gas():
+    if not BENCHMARK_LOG.exists():
+        print(f"❌ Benchmark result not found: {BENCHMARK_LOG}")
         return
 
-    with open(result_path, "r", encoding="utf-8") as f:
+    with open(BENCHMARK_LOG, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    flat_data = flatten_json(data)
+    submission_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"{os.uname().nodename}-{datetime.utcnow().isoformat()}"))
+    data['uuid'] = submission_id
+
+    if GPU_INFO_FILE.exists():
+        with open(GPU_INFO_FILE, 'r', encoding='utf-8') as gf:
+            gpu_info = json.load(gf)
+            data['gpu_info'] = gpu_info
+
+    if LAST_SUCCESS_FILE.exists():
+        with open(LAST_SUCCESS_FILE, 'r', encoding='utf-8') as lf:
+            last_prompt = json.load(lf)
+            data['last_prompt'] = last_prompt.get("workflow")
+
+    data['timestamp'] = datetime.utcnow().isoformat()
+    data['schema_version'] = "1.1"
+
+    flat = flatten_dict(data)
+    print(f"🌐 Submitting to GAS ({GAS_ENDPOINT})...")
     try:
-        r = requests.post(GAS_ENDPOINT, json=flat_data)
-        print(f"📡 Submitted to GAS. Status: {r.status_code}, Response: {r.text}")
+        response = requests.post(GAS_ENDPOINT, json=flat)
+        if response.status_code == 200:
+            print("✅ Submission successful.")
+        else:
+            print(f"⚠️ Submission failed with status {response.status_code}: {response.text}")
     except Exception as e:
-        print(f"❌ Failed to submit to GAS: {e}")
+        print(f"❌ Error submitting to GAS: {e}")
+
 
 if __name__ == "__main__":
-    submit_benchmark_result()
+    submit_to_gas()
