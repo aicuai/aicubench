@@ -1,0 +1,10 @@
+Mellow Pencil追加できました。6モデル体制です。
+
+プロンプトも何種類か用意しましょうか？例えば：
+
+1. **アニメ系**: `1girl, white background, simple background`（さっきのテスト）
+2. **リアル系**: `portrait of a young woman, natural lighting, photorealistic`
+3. **風景系**: `beautiful mountain landscape, sunset, dramatic sky`
+4. **キャラデザ系**: Elena Bloomのプロンプト（`prompts/elena-base.txt`）
+
+どんな方向のプロンプトがいいですか？

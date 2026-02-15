@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.4.4",
+  "checkpoint_id": "4945b331b004",
+  "strategy": "auto-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "aicubench/compare/models.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/49/45b331b004/0/metadata.json",
+      "transcript": "/49/45b331b004/0/full.jsonl",
+      "context": "",
+      "content_hash": "/49/45b331b004/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 7,
+    "cache_creation_tokens": 2290,
+    "cache_read_tokens": 411330,
+    "output_tokens": 34,
+    "api_call_count": 5
+  }
+}
