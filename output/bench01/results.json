@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-16T02:07:08.242772",
+  "results": [
+    {
+      "model_id": "sdxl",
+      "seed": 42,
+      "filename": "sdxl_0042_00001_.png",
+      "elapsed_time": 52.151368856430054,
+      "success": true,
+      "error": null
+    },
+    {
+      "model_id": "animagine",
+      "seed": 42,
+      "filename": "animagine_0042_00001_.png",
+      "elapsed_time": 60.15745306015015,
+      "success": true,
+      "error": null
+    },
+    {
+      "model_id": "flux1-schnell",
+      "seed": 42,
+      "filename": "flux1-schnell_0042_00002_.png",
+      "elapsed_time": 74.30591678619385,
+      "success": true,
+      "error": null
+    }
+  ]
+}
