@@ -1,0 +1,20 @@
+これで以下の構成になりました：
+
+**モデル 6種:**
+| ID | モデル名 | 特徴 |
+|----|----------|------|
+| `sdxl` | SDXL Base 1.0 | 基準モデル |
+| `animagine` | ANIMAGINE XL 4.0 | アニメ特化 |
+| `flux1-schnell` | FLUX.1 Schnell | 高速4ステップ |
+| `wai-illustrious` | WAI-illustrious + LoRA | 瞳の輝き |
+| `mellow-pencil` | Mellow Pencil XL | 鉛筆画風 |
+| `z-image-turbo` | Z-Image-Turbo | 爆速生成 |
+
+**プロンプト 3種:**
+| ファイル | 内容 |
+|----------|------|
+| `elena-base.txt` | Elena Bloom（アニメアイドル） |
+| `portrait-realistic.txt` | リアル系ポートレート |
+| `landscape-fantasy.txt` | ファンタジー風景 |
+
+まずElena Bloomで全6モデル実行しますか？それとも一気に3プロンプト × 6モデル = 18枚回しますか？

@@ -1,0 +1,243 @@
+# Session Context
+
+**Session ID:** c4da667d-0197-4227-afc9-bb3c1d5b5726
+
+**Commit Message:** これをベースにリライトしていこう
+---
+/Users/aki/git.local/SG26/workflows/elena-compariso
+
+## Prompt
+
+これをベースにリライトしていこう
+---
+/Users/aki/git.local/SG26/workflows/elena-comparison
+---
+画像生成AIの世界では、日々新しいモデルが登場し、それぞれが独自の「解釈」を持っています。今回はAiCutyプロジェクトのキャラクター「Elena Bloom（エレナ・ブルーム）」を題材に、ComfyUI APIを活用して8種類のモデルを同一プロンプトで徹底比較しました。ローカル環境で動作する最新モデルから、クラウド経由のAPIモデルまで、その表現力の違いを浮き彫りにします。
+
+ゼロから学ぶ「ComfyUI」
+
+検証の概要と実施手法
+
+今回の実験では、キャラクターの再現性とモデルごとの「味」を公平に評価するため、ComfyUIのAPI機能をフル活用しました。具体的には、UI上のエディタではなく、Pythonから直接JSON形式のワークフローを叩くことで、シード値やプロンプトを完全に同期させたバッチ実行環境を構築しています。
+
+比較対象は、AiCuty公式プロンプトにある WAI-illustrious + LoRA、さらに元祖とも言える SDXL Base 1.0、OpenAIの GPT Image、Googleの Gemini 3 Pro といった大手API勢に加え、アニメ特化の ANIMAGINE XL 4.0、実写に強い FLUX.1 Schnell や爆速生成を誇る Z-Image-Turbo、独特の質感を持つ Mellow Pencil XL の計8種です。
+
+共通プロンプトの設定
+
+すべてのモデルに対し、以下の詳細な指示を与えました。
+
+ポジティブプロンプトの要点：中心に立つ甘く優しいアニメアイドル、ピンクのツインテールと大きなリボン、輝くピンクの瞳。衣装は女神をイメージしたパステルピンクと白のドレスで、フューチャリスティックな光沢と繊細なゴールドのアクセントを加えています。背景は清潔感のあるスタジオの白背景、ライティングは左上からのソフトな指向性ライトに統一。
+
+ネガティブプロンプトの要点：低品質、デフォルメされた顔や手足、重複した衣装、テキストやウォーターマークの排除を徹底。
+
+各モデルの生成結果と考察
+
+WAI-illustrious + LoRA
+
+Illustriousベースに「Niji anime」と「Enchanting Eyes」の2つのLoRAを重ねがけしました。特筆すべきは瞳の輝きで、キャラクターの「可愛らしさ」を一段引き上げる華やかな仕上がりです。
+
+SDXL Base 1.0
+
+まずは基準となるSDXLのバニラモデルです。解像度832×1216、28ステップで生成。アニメスタイルへの適応は限定的ですが、すべての基礎となる安定感があります。
+
+GPT Image (OpenAI)
+
+OpenAIのAPI（gpt-image-1）を経由した生成です。解像度は1024×1536と高めで、独自の解釈によりアニメ調というよりは「洗練されたデジタルイラスト」に近い、リッチな質感で出力されました。
+
+Gemini 3 Pro (Google)
+
+Googleの最新画像生成モデルいわゆるNano Banana Proです。色彩の鮮やかさが際立っており、プロンプトへの忠実度が非常に高いのが特徴です。肌の透明感や光の表現に強みを感じます。
+
+一方で、Nano Banana Proっぽい雰囲気に「見慣れてしまう」というリスクがあります。他の個性的なモデルも継続的に探求していきましょう。
+
+ANIMAGINE XL 4.0 Opt
+
+アニメキャラクター生成において、現在最も信頼できるモデルの一つです。衣装の細部、髪のグラデーション、アイドルのポージングなど、プロンプトの意図を最も正確に汲み取った仕上がりとなりました。
+
+指がちょっと惜しいですね。
+
+FLUX.1 Schnell
+
+Black Forest Labsの高速モデル。わずか4ステップでの生成ですが、その表現力は驚異的です。アニメ専用ではありませんが、独特の空気感とディテールの密度を両立しています。
+
+Mellow Pencil XL
+
+その名の通り、鉛筆画や柔らかいイラスト風の質感を持つモデルです。他のモデルとは一線を画す「手描き感」があり、優しい世界観の表現に最適です。
+
+Z-Image-Turbo
+
+Comfy-Org公式の高速モデル。AuraFlowベースの技術を採用し、4ステップで実用レベルの画像を出力します。ややリアル寄りの質感を残しつつ、圧倒的な生成スピードが武器となります。
+
+ComfyUI APIによる自動化
+
+今回の検証で最も重要なポイントは、「人間が1枚ずつ生成ボタンを押さない」という点です。ComfyUIの「API形式（実行用JSON）」と「UI形式（保存用JSON）」の違いを整理し、Pythonによる自動ランナーを開発しました。
+
+API形式では、ノード情報がリンクベースではなくIDベースのオブジェクトとして管理されます。開発したスクリプトでは、外部のテキストファイルからプロンプトを読み込み、シード値を動的に注入して全モデルを連続実行します。これにより、モデル間の比較だけでなく、将来的な大量生成やA/Bテストも容易になります。
+
+結論と今後の展望
+
+比較の結果、アニメキャラクターとしての完成度は ANIMAGINE XL 4.0 と WAI-illustrious が抜きん出ていました。一方で、Gemini 3 Pro の色彩感覚や FLUX.1 の生成速度など、用途に応じた使い分けの重要性も再確認できました。ComfyUIを単なるツールとして使うのではなく、APIを通じて「システム」として組み込むことで、クリエイティブの検証効率は飛躍的に向上します。
+
+購読者限定：Pythonランナー＆ワークフローソースコード
+
+ここからは、今回の検証で使用したPythonスクリプトおよび各モデルのAPI用JSONワークフローを公開します。ご自身の環境で同様の比較実験を行いたい方は、ぜひ活用してください。
+
+※ソースコード・設定ファイル一式は以下からダウンロード/コピー可能です。
+
+# run_elena.py (Snippet)
+import json
+import requests
+import argparse
+
+# ワークフローにプロンプトとシードを注入して実行するコアロジック
+def queue_prompt(prompt_workflow):
+    p = {"prompt": prompt_workflow}
+    data = json.dumps(p).encode('utf-8')
+    requests.post("http://127.0.0.1:8188/prompt", data=data)
+
+# (以下、フルコードは有料エリアにて...)
+
+
+今回の検証で使用した全8モデルのAPI JSONファイル一式は以下に続きます
+
+🛠 実装詳細：モデルのセットアップと自動化スクリプト
+
+このセクションでは、今回の比較実験を読者の皆様が自身の環境で再現するための具体的な手順を詳説します。各モデルの入手先から、ComfyUI APIを制御するPythonランナーの設計までを網羅しました。
+
+1. 各モデルの導入とディレクトリ構成
+
+画像生成の心臓部となるモデルファイルは、ComfyUIの models ディレクトリ内にある各フォルダへ適切に配置する必要があります。
+
+チェックポイントモデルの配置
+
+まず、標準的なSDXL系モデルである SDXL Base 1.0、アニメ特化の ANIMAGINE XL 4.0、そして WAI-illustrious と Mellow Pencil XL は、すべて models/checkpoints フォルダに格納します。これらはベースとなる学習データが詰まった巨大なファイルです。
+
+高速生成モデルの配置
+
+次に、次世代のアーキテクチャを採用している FLUX.1 Schnell および Z-Image-Turbo については、models/unet（または models/diffusion_models）フォルダへ配置します。これらのモデルは、従来のチェックポイントとは異なる内部構造を持っているため、ComfyUIの最新バージョン（v0.13.0以降）を使用し、適切なローダーノードを選択することが重要です。
+
+補助ファイルとLoRA
+
+WAI-illustriousの表現力を引き出すために使用した Niji_anime_illustrious や EnchantingEyes などのLoRAファイルは、models/loras フォルダへ配置してください。また、FLUX系モデルの動作には models/clip フォルダに T5-XXL 等のテキストエンコーダーが、models/vae フォルダに専用の VAE ファイルが必要となります。
+
+2. Pythonランナー：run_elena.py の設計
+
+実験の自動化を担う run_elena.py は、人間がUI上で操作する手間を省き、コードから直接ComfyUIサーバーへ命令を送るためのスクリプトです。
+
+このプログラムの役割は、外部のテキストファイルから読み込んだポジティブ・ネガティブ両方のプロンプトを、モデルごとのAPI形式JSONワークフローに動的に注入し、HTTPリクエストを通じてComfyUIのキューイングシステムに登録することにあります。
+
+以下に、その基盤となるソースコードを示します。
+
+import json
+import requests
+import argparse
+import os
+
+# ComfyUIのAPIエンドポイント設定
+SERVER_ADDRESS = "127.0.0.1:8188"
+
+def load_text(file_path):
+    """プロンプトファイルを読み込む補助関数"""
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return f.read().strip()
+
+def queue_prompt(prompt_workflow):
+    """ComfyUIサーバーにジョブを送信する"""
+    p = {"prompt": prompt_workflow}
+    data = json.dumps(p).encode('utf-8')
+    try:
+        response = requests.post(f"http://{SERVER_ADDRESS}/prompt", data=data)
+        return response.json()
+    except Exception as e:
+        print(f"ComfyUIサーバーへの接続エラー: {e}")
+        return None
+
+def run_experiment(model_id, seed, pos_prompt, neg_prompt):
+    """個別のモデルに対してワークフローを実行する"""
+    # 実行対象のJSONファイルをapiフォルダから読み込み
+    workflow_path = f"api/{model_id}_api.json"
+    if not os.path.exists(workflow_path):
+        print(f"ワークフローファイルが見つかりません: {workflow_path}")
+        return
+
+    with open(workflow_path, 'r', encoding='utf-8') as f:
+        workflow = json.load(f)
+
+    # ワークフロー内の全ノードを走査し、プロンプトとシードを上書き
+    for node_id, node in workflow.items():
+        # KSampler等のサンプラーノードを特定してシード値を固定
+        if "seed" in node.get("inputs", {}):
+            node["inputs"]["seed"] = seed
+        
+        # CLIPTextEncodeノードを特定してプロンプトを注入
+        if node.get("class_type") == "CLIPTextEncode":
+            # ノード名やタイトルからポジティブ/ネガティブを判定
+            title = node.get("_meta", {}).get("title", "").lower()
+            if "negative" in title:
+                node["inputs"]["text"] = neg_prompt
+            else:
+                node["inputs"]["text"] = pos_prompt
+
+    print(f"モデル {model_id} の生成ジョブを開始します（Seed: {seed}）")
+    res = queue_prompt(workflow)
+    if res:
+        print(f"受付完了。Prompt ID: {res.get('prompt_id')}")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Elena Bloom 比較実験ランナー")
+    parser.add_argument("--model", nargs="+", help="実行するモデルIDのリスト (例: 00 03)")
+    parser.add_argument("--seed", type=int, default=42, help="共通シード値")
+    args = parser.parse_args()
+
+    # 外部プロンプトの読み込み
+    pos = load_text("elena-base.txt")
+    neg = load_text("elena-negative.txt")
+    
+    # モデルIDの指定がない場合は全8種類を実行
+    target_models = args.model if args.model else ["00", "01", "02", "03", "04", "05", "06", "07"]
+    
+    for mid in target_models:
+        run_experiment(mid, args.seed, pos, neg)
+
+
+3. API用JSONワークフローの作成方法
+
+このスクリプトを動作させるには、api/ フォルダ内に各モデルの設定を記述したJSONファイルが必要です。これらは、通常のComfyUI画面上で構築したワークフローを「API形式」で書き出すことで入手できます。
+
+具体的には、ComfyUIの設定画面（歯車アイコン）から「Enable Dev mode（開発者モードを有効にする）」にチェックを入れます。すると、メニューに「Save (API Format)」というボタンが出現します。このボタンから書き出されたJSONには、GUI上のノード位置などの不要な情報が含まれず、純粋に「どのノードがどの値でつながっているか」という実行命令のみが記述されます。
+
+## Summary
+
+これで以下の構成になりました：
+
+**モデル 6種:**
+| ID | モデル名 | 特徴 |
+|----|----------|------|
+| `sdxl` | SDXL Base 1.0 | 基準モデル |
+| `animagine` | ANIMAGINE XL 4.0 | アニメ特化 |
+| `flux1-schnell` | FLUX.1 Schnell | 高速4ステップ |
+| `wai-illustrious` | WAI-illustrious + LoRA | 瞳の輝き |
+| `mellow-pencil` | Mellow Pencil XL | 鉛筆画風 |
+| `z-image-turbo` | Z-Image-Turbo | 爆速生成 |
+
+**プロンプト 3種:**
+| ファイル | 内容 |
+|----------|------|
+| `elena-base.txt` | Elena Bloom（アニメアイドル） |
+| `portrait-realistic.txt` | リアル系ポートレート |
+| `landscape-fantasy.txt` | ファンタジー風景 |
+
+まずElena Bloomで全6モデル実行しますか？それとも一気に3プロンプト × 6モデル = 18枚回しますか？
+
+## Key Actions
+
+- - **Glob**: **/*
+- - **Read**: /Users/aki/git.local/SG26/workflows/elena-comparison/elena-base.txt
+- - **Read**: /Users/aki/git.local/SG26/workflows/elena-comparison/elena-negative.txt
+- - **Bash**: promptsディレクトリ確認
+- - **Glob**: prompts/**/*
+- - **Bash**: promptsディレクトリ作成
+- - **Bash**: Elena Bloomプロンプトをコピー
+- - **Write**: /Users/aki/git.local/aicubench/prompts/portrait-realistic.txt
+- - **Write**: /Users/aki/git.local/aicubench/prompts/landscape-fantasy.txt
+- - **Write**: /Users/aki/git.local/aicubench/prompts/negative-standard.txt

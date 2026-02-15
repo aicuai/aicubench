@@ -1,0 +1,30 @@
+{
+  "cli_version": "0.4.4",
+  "checkpoint_id": "a1895dc34249",
+  "strategy": "auto-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "prompts/elena-base.txt",
+    "prompts/elena-negative.txt",
+    "prompts/landscape-fantasy.txt",
+    "prompts/negative-standard.txt",
+    "prompts/portrait-realistic.txt"
+  ],
+  "sessions": [
+    {
+      "metadata": "/a1/895dc34249/0/metadata.json",
+      "transcript": "/a1/895dc34249/0/full.jsonl",
+      "context": "",
+      "content_hash": "/a1/895dc34249/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 9,
+    "cache_creation_tokens": 10671,
+    "cache_read_tokens": 731486,
+    "output_tokens": 142,
+    "api_call_count": 8
+  }
+}
