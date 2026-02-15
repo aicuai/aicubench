@@ -1,0 +1,33 @@
+# 構図と品質
+masterpiece, best quality, solo, full body, sweet and gentle anime idol girl in center position, from front,
+soft and affectionate personality, slightly shy warm smile,
+
+# 髪型・装飾
+fluffy twin tails tied high with big pastel pink ribbons and rose flower hair clips,
+soft curled ends with subtle rose pink gradient,
+choppy bangs, loose side bangs softly framing forehead,
+
+# 顔立ち・表情（目を強化）
+silky rose-pink hair,
+big bright sparkling pink eyes, highly detailed eyes, glossy eyes, sharp pupils, symmetrical eyes, clear highlights,
+large expressive eyes, looking directly at camera, tidy silhouette,
+
+# 衣装（ゴージャスで神聖なアイドルステージ衣装）
+wearing a goddess-inspired idol stage outfit mainly in pastel pink and white with fine gold accents and subtle black trims:
+off-shoulder flowing mini dress made of lightweight futuristic tech-fabric with soft iridescent glow and subtle sheer overlays along skirt edges,
+layered skirt with outer bright pink tech-fabric and inner layer of airy semi-transparent white chiffon,
+slim gold belt with tiny pink gemstone and subtle black edge lines,
+cropped white bolero jacket with semi-sheer mesh sleeves and hem with faint see-through effect and pink piping,
+subtle glowing circuit pattern on cuffs outlined with fine black piping,
+fingerless lace gloves with tiny pink bows,
+white ankle boots with subtle gold trims and small black edging at soles with small pink ribbon flares at back,
+
+# ポーズ
+standing in a cute idol pose with both hands forming a heart near chest,
+looking directly at camera,
+
+# 背景
+white background, simple background, clean studio light,
+
+# ライティング（統一指示）
+soft directional white light from upper left, consistent shadowing across all elements

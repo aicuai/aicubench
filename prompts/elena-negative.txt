@@ -1,0 +1,5 @@
+low quality, worst quality, bad anatomy, poorly drawn face,
+deformed eyes, asymmetrical eyes, dull eyes, bad eyes, multiple pupils, creepy eyes,
+extra limbs, cropped, blurry, out of frame,
+watermark, text, nsfw, loli, mature woman, heavy makeup,
+inconsistent outfit, duplicate costume
