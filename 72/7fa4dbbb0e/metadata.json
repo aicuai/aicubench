@@ -1,0 +1,30 @@
+{
+  "cli_version": "0.4.4",
+  "checkpoint_id": "727fa4dbbb0e",
+  "strategy": "auto-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "output/bench01/benchmark_card.png",
+    "output/bench01/images/animagine_42.png",
+    "output/bench01/images/flux1-schnell_42.png",
+    "output/bench01/images/sdxl_42.png",
+    "output/bench01/results.json"
+  ],
+  "sessions": [
+    {
+      "metadata": "/72/7fa4dbbb0e/0/metadata.json",
+      "transcript": "/72/7fa4dbbb0e/0/full.jsonl",
+      "context": "",
+      "content_hash": "/72/7fa4dbbb0e/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 6,
+    "cache_creation_tokens": 1282,
+    "cache_read_tokens": 320868,
+    "output_tokens": 23,
+    "api_call_count": 4
+  }
+}
