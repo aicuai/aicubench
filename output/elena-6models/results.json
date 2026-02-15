@@ -1,0 +1,53 @@
+{
+  "timestamp": "2026-02-16T02:40:15.798814",
+  "results": [
+    {
+      "model_id": "sdxl",
+      "seed": 42,
+      "filename": "sdxl_0042_00002_.png",
+      "elapsed_time": 54.156914949417114,
+      "success": true,
+      "error": null
+    },
+    {
+      "model_id": "animagine",
+      "seed": 42,
+      "filename": "animagine_0042_00002_.png",
+      "elapsed_time": 70.2081527709961,
+      "success": true,
+      "error": null
+    },
+    {
+      "model_id": "flux1-schnell",
+      "seed": 42,
+      "filename": "flux1-schnell_0042_00003_.png",
+      "elapsed_time": 76.36020112037659,
+      "success": true,
+      "error": null
+    },
+    {
+      "model_id": "wai-illustrious",
+      "seed": 42,
+      "filename": "wai-illustrious_0042_00001_.png",
+      "elapsed_time": 76.22239422798157,
+      "success": true,
+      "error": null
+    },
+    {
+      "model_id": "mellow-pencil",
+      "seed": 42,
+      "filename": "mellow-pencil_0042_00001_.png",
+      "elapsed_time": 68.28861784934998,
+      "success": true,
+      "error": null
+    },
+    {
+      "model_id": "z-image-turbo",
+      "seed": 42,
+      "filename": "z-image-turbo_0042_00001_.png",
+      "elapsed_time": 54.25822305679321,
+      "success": true,
+      "error": null
+    }
+  ]
+}
