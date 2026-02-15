@@ -1,0 +1,33 @@
+{
+  "cli_version": "0.4.4",
+  "checkpoint_id": "72cadc807c1d",
+  "strategy": "auto-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "output/elena-6models/benchmark_card.png",
+    "output/elena-6models/images/animagine_42.png",
+    "output/elena-6models/images/flux1-schnell_42.png",
+    "output/elena-6models/images/mellow-pencil_42.png",
+    "output/elena-6models/images/sdxl_42.png",
+    "output/elena-6models/images/wai-illustrious_42.png",
+    "output/elena-6models/images/z-image-turbo_42.png",
+    "output/elena-6models/results.json"
+  ],
+  "sessions": [
+    {
+      "metadata": "/72/cadc807c1d/0/metadata.json",
+      "transcript": "/72/cadc807c1d/0/full.jsonl",
+      "context": "",
+      "content_hash": "/72/cadc807c1d/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 5,
+    "cache_creation_tokens": 1659,
+    "cache_read_tokens": 298659,
+    "output_tokens": 28,
+    "api_call_count": 3
+  }
+}
