@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# activate Python environment if needed
-# source venv/bin/activate
+# activate Python environment
+source .venv/bin/activate
 
-# Install dependencies
+# Install dependencies (if needed)
 pip install -e .
 
 # Run benchmark with default options

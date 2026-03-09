@@ -14,10 +14,13 @@ dependencies = [
     "psutil",
     "requests",
     "rich",
+    "pyyaml",
+    "pillow",
 ]
 
 [project.scripts]
 aicubench = "aicubench.main:main"
+aicubench-compare = "aicubench.compare.cli:main"
 
 [build-system]
 requires = ["setuptools", "wheel"]

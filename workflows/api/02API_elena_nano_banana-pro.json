@@ -1,0 +1,30 @@
+{
+  "1": {
+    "inputs": {
+      "prompt": "# 構図と品質\nmasterpiece, best quality, solo, full body, sweet and gentle anime idol girl in center position, from front,\nsoft and affectionate personality, slightly shy warm smile,\n\n# 髪型・装飾\nfluffy twin tails tied high with big pastel pink ribbons and rose flower hair clips,\nsoft curled ends with subtle rose pink gradient,\nchoppy bangs, loose side bangs softly framing forehead,\n\n# 顔立ち・表情（目を強化）\nsilky rose-pink hair,\nbig bright sparkling pink eyes, highly detailed eyes, glossy eyes, sharp pupils, symmetrical eyes, clear highlights,\nlarge expressive eyes, looking directly at camera, tidy silhouette,\n\n# 衣装（ゴージャスで神聖なアイドルステージ衣装）\nwearing a goddess-inspired idol stage outfit mainly in pastel pink and white with fine gold accents and subtle black trims:\noff-shoulder flowing mini dress made of lightweight futuristic tech-fabric with soft iridescent glow and subtle sheer overlays along skirt edges,\nlayered skirt with outer bright pink tech-fabric and inner layer of airy semi-transparent white chiffon,\nslim gold belt with tiny pink gemstone and subtle black edge lines,\ncropped white bolero jacket with semi-sheer mesh sleeves and hem with faint see-through effect and pink piping,\nsubtle glowing circuit pattern on cuffs outlined with fine black piping,\nfingerless lace gloves with tiny pink bows,\nwhite ankle boots with subtle gold trims and small black edging at soles with small pink ribbon flares at back,\n\n# ポーズ\nstanding in a cute idol pose with both hands forming a heart near chest,\nlooking directly at camera,\n\n# 背景\nwhite background, simple background, clean studio light,\n\n# ライティング（統一指示）\nsoft directional white light from upper left, consistent shadowing across all elements",
+      "model": "gemini-3-pro-image-preview",
+      "seed": 42,
+      "aspect_ratio": "3:4",
+      "resolution": "1K",
+      "response_modalities": "IMAGE",
+      "system_prompt": "You are an expert anime illustration generator. Create high-quality anime artwork based on the description. Focus on accurate character design, clean lines, and vibrant colors."
+    },
+    "class_type": "GeminiImage2Node",
+    "_meta": {
+      "title": "Nano Banana Pro（Google Gemini Image）"
+    }
+  },
+  "2": {
+    "inputs": {
+      "filename_prefix": "Elena_NanoBanana",
+      "images": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "画像を保存"
+    }
+  }
+}

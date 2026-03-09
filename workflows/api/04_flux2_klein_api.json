@@ -1,0 +1,110 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "flux-2-klein-base-9b.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {"title": "UNET Loader (FLUX.2 Klein 9B)"}
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_3_8b_fp8mixed.safetensors",
+      "type": "flux2",
+      "device": "default"
+    },
+    "_meta": {"title": "CLIP Loader (Qwen 3 8B)"}
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "flux2-vae.safetensors"
+    },
+    "_meta": {"title": "VAE Loader"}
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "",
+      "clip": ["2", 0]
+    },
+    "_meta": {"title": "Positive Prompt"}
+  },
+  "5": {
+    "class_type": "ConditioningZeroOut",
+    "inputs": {
+      "conditioning": ["4", 0]
+    },
+    "_meta": {"title": "Negative (Zero Out)"}
+  },
+  "6": {
+    "class_type": "EmptyFlux2LatentImage",
+    "inputs": {
+      "width": 832,
+      "height": 1216,
+      "batch_size": 1
+    },
+    "_meta": {"title": "Empty Latent (Flux2)"}
+  },
+  "7": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 42
+    },
+    "_meta": {"title": "Random Noise"}
+  },
+  "8": {
+    "class_type": "CFGGuider",
+    "inputs": {
+      "cfg": 5,
+      "model": ["1", 0],
+      "positive": ["4", 0],
+      "negative": ["5", 0]
+    },
+    "_meta": {"title": "CFG Guider"}
+  },
+  "9": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "_meta": {"title": "Sampler Select"}
+  },
+  "10": {
+    "class_type": "Flux2Scheduler",
+    "inputs": {
+      "steps": 20,
+      "width": 832,
+      "height": 1216
+    },
+    "_meta": {"title": "Flux2 Scheduler"}
+  },
+  "11": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": ["7", 0],
+      "guider": ["8", 0],
+      "sampler": ["9", 0],
+      "sigmas": ["10", 0],
+      "latent_image": ["6", 0]
+    },
+    "_meta": {"title": "Sampler Custom Advanced"}
+  },
+  "12": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["11", 0],
+      "vae": ["3", 0]
+    },
+    "_meta": {"title": "VAE Decode"}
+  },
+  "13": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "Elena_04_FLUX2Klein",
+      "images": ["12", 0]
+    },
+    "_meta": {"title": "Save Image"}
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-02-16T01:14:57.686098",
+  "results": [
+    {
+      "model_id": "flux1-schnell",
+      "seed": 42,
+      "filename": "",
+      "elapsed_time": 300.84238481521606,
+      "success": false,
+      "error": "Timeout or generation error"
+    }
+  ]
+}

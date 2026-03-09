@@ -1,0 +1,96 @@
+{
+  "1": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": {
+      "ckpt_name": "waiNSFWIllustrious_v140.safetensors"
+    },
+    "_meta": {"title": "WAI NSFW Illustrious"}
+  },
+  "2": {
+    "class_type": "CLIPSetLastLayer",
+    "inputs": {
+      "stop_at_clip_layer": -2,
+      "clip": ["1", 1]
+    },
+    "_meta": {"title": "CLIP Set Last Layer"}
+  },
+  "3": {
+    "class_type": "LoraLoader",
+    "inputs": {
+      "lora_name": "Niji_anime_illustrious.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": ["1", 0],
+      "clip": ["2", 0]
+    },
+    "_meta": {"title": "LoRA: Niji Anime"}
+  },
+  "4": {
+    "class_type": "LoraLoader",
+    "inputs": {
+      "lora_name": "EnchantingEyesIllustrious.safetensors",
+      "strength_model": 0.7,
+      "strength_clip": 0.7,
+      "model": ["3", 0],
+      "clip": ["3", 1]
+    },
+    "_meta": {"title": "LoRA: Enchanting Eyes"}
+  },
+  "5": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "",
+      "clip": ["4", 1]
+    },
+    "_meta": {"title": "Positive Prompt"}
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "",
+      "clip": ["4", 1]
+    },
+    "_meta": {"title": "Negative Prompt"}
+  },
+  "7": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {
+      "width": 832,
+      "height": 1216,
+      "batch_size": 1
+    },
+    "_meta": {"title": "Empty Latent"}
+  },
+  "8": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 42,
+      "steps": 28,
+      "cfg": 5,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "karras",
+      "denoise": 1,
+      "model": ["4", 0],
+      "positive": ["5", 0],
+      "negative": ["6", 0],
+      "latent_image": ["7", 0]
+    },
+    "_meta": {"title": "KSampler"}
+  },
+  "9": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["8", 0],
+      "vae": ["1", 2]
+    },
+    "_meta": {"title": "VAE Decode"}
+  },
+  "10": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "Elena_05_WAI",
+      "images": ["9", 0]
+    },
+    "_meta": {"title": "Save Image"}
+  }
+}
